@@ -6,16 +6,25 @@ var shields_array = []
 var baddies_array = []
 
 var max_vel = 12
-var nmulti = 0.5
+var nmulti = 1
 var dampen_amount = 0.98
 var health_reduction = 0.0001
+var spawn_timer = 10   // seconds
 
 var n_clouds = 8
-var n_baddies = 12
+var n_baddies = 6
 var n_shields = 1024
 
-var shield_min = 0.01
-var shield_scale = 0.1
+
+var cloud_scale_multi = 1
+
+
+var shield_min = 0.001
+var shield_scale = 0.2
+var shield_alpha = 0.6
+var sheild_max_velocity = 8
+
+var baddie_max_velocity = 4
 var baddie_scale = 0.2
 
 
@@ -47,7 +56,7 @@ for (var i = 0; i < n_clouds; i++) {
 
   // clouds.alpha = Math.random() * 0.6 + 0.1
   clouds.velocity = Math.random() + 0.33
-  clouds.scale.x = clouds.scale.y = (Math.random() * 0.3) + 0.1
+  clouds.scale.x = clouds.scale.y = (Math.random() * cloud_scale_multi) + 0.1
 
   clouds_array.push(clouds)
 
@@ -74,6 +83,9 @@ for (var i = 0; i < n_baddies; i++) {
 
   baddie_sprite.type = 'baddie'
   baddie_sprite.health = 1
+  baddie_sprite.max_velocity = baddie_max_velocity
+
+  baddie_sprite.reset = false
 
   baddie_sprite.tint = 0xFF0000
 
@@ -115,6 +127,8 @@ for (var i = 0; i < n_shields; i++) {
   // center the sprites anchor point
   evident_logo.anchor.x = 0.5;
   evident_logo.anchor.y = 0.5;
+
+  evident_logo.alpha = shield_alpha
 
   // move the sprite t the center of the screen
   evident_logo.position.x = w * 0.5;
@@ -197,7 +211,7 @@ function animate() {
       if (c.position.y < h && c.position.y > 0 && distance < min_distance) {
 
         if (s.type === 'shield' && c.type === 'baddie') {
-          if (c.health > 0) {
+          if (c.reset === false) {
             s.velocity.x += -n_vector[0] * dv * multi
             s.velocity.y += -n_vector[1] * dv * multi
           }
@@ -208,7 +222,7 @@ function animate() {
 
       }
 
-
+      // max velocity checks
       if(s.max_velocity === undefined){
         s.max_velocity = max_vel
       }
@@ -236,13 +250,30 @@ function animate() {
       s.position.x += s.velocity.x
       s.position.y += s.velocity.y
 
+      if(s.type === 'baddie'){
+        if(s.position.x > w){
+          s.position.x -= w
+        }
+        if(s.position.x < 0){
+          s.position.x += w
+        }
+        if(s.position.y > h){
+          s.position.y -= h
+        }
+        if(s.position.y < 0){
+          s.position.y += h
+        }
+
+      }
+
+      // reduce health of baddies
       if (s.type === 'shield' && c.type === 'baddie') {
 
-        if (distance < 100) {
+        if (distance < 100 ) {
 
           if (c.reset !== true) {
             c.health -= health_reduction
-            c.alpha = c.health
+            // c.alpha = c.health
           }
 
           if (c.health <= 0.01) {
@@ -250,6 +281,7 @@ function animate() {
             c.reset = true
             c.health = 1
             c.alpha = 0
+            // c.tint = 0x0000FF
 
             setTimeout(function () {
 
@@ -265,10 +297,10 @@ function animate() {
               }
 
               c.velocity.x = c.velocity.y = 0
-              c.health = 1
+              c.health = 1 + Math.random()
               c.alpha = 1
               console.log('reset', c.position.x)
-            }, 1000)
+            }, 1000 * spawn_timer)
 
           }
 
@@ -282,9 +314,9 @@ function animate() {
   }
 
   attr(shields_array, clouds_array, 0.33)
-  attr(shields_array, baddies_array, 0.1)
+  attr(shields_array, baddies_array, 0.5)
 
-  attr(baddies_array, shields_array, -0.5, 100)
+  attr(baddies_array, shields_array, -0.95)
   attr(baddies_array, clouds_array, 1)
 
   // attr()
