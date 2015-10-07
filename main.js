@@ -4,6 +4,7 @@ var h = window.innerHeight
 var clouds_array = []
 var shields_array = []
 var baddies_array = []
+var points_array = []
 
 var max_vel = 12
 var nmulti = 1
@@ -110,9 +111,6 @@ for (var i = 0; i < n_baddies; i++) {
 
 }
 
-
-
-
 var shield_texture = PIXI.Texture.fromImage("game-images/shield.png");
 
 for (var i = 0; i < n_shields; i++) {
@@ -144,6 +142,24 @@ for (var i = 0; i < n_shields; i++) {
   stage.addChild(evident_logo);
 
 }
+
+var current_score = 0
+var text_score_indicator = new PIXI.Text("-");
+text_score_indicator.style = { align: "left", font:"100px bit", fill:"rgb(0,140,186)"}
+text_score_indicator.position.x = 10
+// text_score_indicator.scale.x = text_score_indicator.scale.y = 5
+stage.addChild(text_score_indicator);
+
+var evident_marketing_text = new PIXI.Text("-");
+evident_marketing_text.style  = { align: "left", font:"200px bit", fill:"rgb(255,255,255)"}
+evident_marketing_text.position.y = h - 200
+evident_marketing_text.position.x = 10
+
+setTimeout(function(){
+  evident_marketing_text.text = 'evident.io'
+},1000)
+// evident_marketing_text.scale.x = evident_marketing_text.scale.y = 5
+stage.addChild(evident_marketing_text);
 
 
 function animate() {
@@ -278,6 +294,10 @@ function animate() {
 
           if (c.health <= 0.01) {
 
+            // kill
+            current_score += 1
+            text_score_indicator.text  = 'Threats Remediated: ' + current_score
+
             c.reset = true
             c.health = 1
             c.alpha = 0
@@ -310,7 +330,6 @@ function animate() {
 
     }
 
-
   }
 
   attr(shields_array, clouds_array, 0.33)
@@ -320,7 +339,6 @@ function animate() {
   attr(baddies_array, clouds_array, 1)
 
   // attr()
-
 
   // shields_array.forEach(tick_attract)
   // baddies_array.forEach(tick_attract)
