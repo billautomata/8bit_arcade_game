@@ -42,7 +42,7 @@ for (var i = 0; i < n_clouds; i++) {
 
 }
 
-var n_shields = 32
+var n_shields = 2
 
 var shield_texture = PIXI.Texture.fromImage("game-images/shield.png");
 
@@ -69,6 +69,39 @@ for (var i = 0; i < n_shields; i++) {
 
 }
 
+var n_baddies = 32
+var baddie_texture_array = []
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/bandit.png"))
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/miner.png"))
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/pacman.png"))
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/leak.png"))
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/thing.png"))
+
+for (var i = 0; i < n_baddies; i++) {
+
+  // create a new Sprite using the texture
+  var texture_to_use = i % baddie_texture_array.length
+  var baddie_sprite = new PIXI.Sprite(baddie_texture_array[texture_to_use]);
+
+  baddie_sprite.scale.x = baddie_sprite.scale.y = 0.1
+
+  // center the sprites anchor point
+  baddie_sprite.anchor.x = 0.5;
+  baddie_sprite.anchor.y = 0.5;
+
+  // move the sprite t the center of the screen
+  baddie_sprite.position.x = w * 0.5;
+  baddie_sprite.position.y = h * 0.5;
+
+  baddie_sprite.velocity = { x: Math.random()*2-1 , y: Math.random()*2-1 }
+
+  baddies_array.push(baddie_sprite)
+
+  stage.addChild(baddie_sprite);
+
+}
+
+
 function animate() {
 
   var t = Date.now() * 0.001
@@ -88,13 +121,12 @@ function animate() {
 
   })
 
-  shields_array.forEach(function (s, i) {
+
+  function tick_attract(s, i) {
 
     // find the closest cloud
     var cloud_index = i % (clouds_array.length)
     var c = clouds_array[cloud_index]
-
-
 
     // attract to it
     var distance = Math.sqrt(Math.pow(s.position.x-c.position.x,2) + Math.pow(s.position.y-c.position.y,2))
@@ -134,8 +166,10 @@ function animate() {
     s.position.x += s.velocity.x
     s.position.y += s.velocity.y
 
+  }
 
-  })
+  shields_array.forEach(tick_attract)
+  baddies_array.forEach(tick_attract)
 
   // render the stage
   renderer.render(stage);
