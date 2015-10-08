@@ -7,18 +7,16 @@ var baddies_array = []
 var points_array = []
 
 var max_vel = 12
-var nmulti = 1
+var nmulti = 1.5
 var dampen_amount = 0.98
 var health_reduction = 0.0001
 var spawn_timer = 10   // seconds
 
 var n_clouds = 8
-var n_baddies = 6
+var n_baddies = 8
 var n_shields = 1024
 
-
 var cloud_scale_multi = 1
-
 
 var shield_min = 0.001
 var shield_scale = 0.2
@@ -69,12 +67,48 @@ for (var i = 0; i < n_clouds; i++) {
 
 
 
+
+var shield_texture = PIXI.Texture.fromImage("game-images/shield.png");
+
+for (var i = 0; i < n_shields; i++) {
+
+  // create a new Sprite using the texture
+  var evident_logo = new PIXI.Sprite(shield_texture);
+
+  evident_logo.type = 'shield'
+
+  evident_logo.scale.x = evident_logo.scale.y = shield_min + (Math.random() * shield_scale)
+
+  // center the sprites anchor point
+  evident_logo.anchor.x = 0.5;
+  evident_logo.anchor.y = 0.5;
+
+  evident_logo.alpha = shield_alpha
+
+  // move the sprite t the center of the screen
+  evident_logo.position.x = w * 0.5;
+  evident_logo.position.y = h * 0.5;
+
+  evident_logo.velocity = {
+    x: 0,
+    y: 0
+  }
+
+  shields_array.push(evident_logo)
+
+  stage.addChild(evident_logo);
+
+}
+
+
+
 var baddie_texture_array = []
 baddie_texture_array.push(PIXI.Texture.fromImage("game-images/bandit.png"))
 baddie_texture_array.push(PIXI.Texture.fromImage("game-images/miner.png"))
 baddie_texture_array.push(PIXI.Texture.fromImage("game-images/pacman.png"))
 baddie_texture_array.push(PIXI.Texture.fromImage("game-images/leak.png"))
 baddie_texture_array.push(PIXI.Texture.fromImage("game-images/thing.png"))
+baddie_texture_array.push(PIXI.Texture.fromImage("game-images/skull.png"))
 
 for (var i = 0; i < n_baddies; i++) {
 
@@ -111,48 +145,18 @@ for (var i = 0; i < n_baddies; i++) {
 
 }
 
-var shield_texture = PIXI.Texture.fromImage("game-images/shield.png");
-
-for (var i = 0; i < n_shields; i++) {
-
-  // create a new Sprite using the texture
-  var evident_logo = new PIXI.Sprite(shield_texture);
-
-  evident_logo.type = 'shield'
-
-  evident_logo.scale.x = evident_logo.scale.y = shield_min + (Math.random() * shield_scale)
-
-  // center the sprites anchor point
-  evident_logo.anchor.x = 0.5;
-  evident_logo.anchor.y = 0.5;
-
-  evident_logo.alpha = shield_alpha
-
-  // move the sprite t the center of the screen
-  evident_logo.position.x = w * 0.5;
-  evident_logo.position.y = h * 0.5;
-
-  evident_logo.velocity = {
-    x: 0,
-    y: 0
-  }
-
-  shields_array.push(evident_logo)
-
-  stage.addChild(evident_logo);
-
-}
-
+//////
+// create the text elements
 var current_score = 0
 var text_score_indicator = new PIXI.Text("-");
-text_score_indicator.style = { align: "left", font:"100px bit", fill:"rgb(0,140,186)"}
+text_score_indicator.style = { align: "left", font:"100px bit", fill:"rgb(0,140,186)", dropShadow: 'true', dropShadowColor: 'rgb(255,255,255)'}
 text_score_indicator.position.x = 10
 // text_score_indicator.scale.x = text_score_indicator.scale.y = 5
 stage.addChild(text_score_indicator);
 
 var evident_marketing_text = new PIXI.Text("-");
-evident_marketing_text.style  = { align: "left", font:"200px bit", fill:"rgb(255,255,255)"}
-evident_marketing_text.position.y = h - 200
+evident_marketing_text.style  = { align: "left", font:"300px bit", fill:"rgb(255,255,255)", dropShadow: 'true', dropShadowColor: 'rgb(0,140,186)'}
+evident_marketing_text.position.y = h - 300
 evident_marketing_text.position.x = 10
 
 setTimeout(function(){
