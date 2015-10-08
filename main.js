@@ -5,6 +5,7 @@ var clouds_array = []
 var shields_array = []
 var baddies_array = []
 var points_array = []
+var thulu_array = []
 
 var max_vel = 12
 var nmulti = 1.5
@@ -26,7 +27,6 @@ var sheild_max_velocity = 8
 var baddie_max_velocity = 4
 var baddie_scale = 0.2
 
-
 // create an new instance of a pixi stage
 var stage = new PIXI.Stage(0x0000FF);
 
@@ -38,12 +38,23 @@ document.body.appendChild(renderer.view);
 
 requestAnimationFrame(animate);
 
-// create a texture from an image path
+
+var cloudthulu_texture = PIXI.Texture.fromImage('game-images/cloudthulu2.png')
+var cloudthulu = new PIXI.Sprite(cloudthulu_texture)
+
+cloudthulu.anchor.x = cloudthulu.anchor.y = 0.5
+cloudthulu.position.x = w*0.5
+cloudthulu.position.y = h*0.5
+
+cloudthulu.scale.x = cloudthulu.scale.y = 0.6
+cloudthulu.active = false
+
+thulu_array.push(cloudthulu)
+
+stage.addChild(cloudthulu)
+
 
 var clouds_texture = PIXI.Texture.fromImage("game-images/clouds.png");
-
-
-
 for (var i = 0; i < n_clouds; i++) {
 
   var clouds = new PIXI.Sprite(clouds_texture)
@@ -62,10 +73,6 @@ for (var i = 0; i < n_clouds; i++) {
   stage.addChild(clouds)
 
 }
-
-
-
-
 
 
 var shield_texture = PIXI.Texture.fromImage("game-images/shield.png");
@@ -150,14 +157,14 @@ for (var i = 0; i < n_baddies; i++) {
 var current_score = 0
 var text_score_indicator = new PIXI.Text("-");
 text_score_indicator.style = { align: "left", font:"100px bit", fill:"rgb(0,140,186)", dropShadow: 'true', dropShadowColor: 'rgb(255,255,255)'}
-text_score_indicator.position.x = 10
+text_score_indicator.position.x = 320
 // text_score_indicator.scale.x = text_score_indicator.scale.y = 5
 stage.addChild(text_score_indicator);
 
 var evident_marketing_text = new PIXI.Text("-");
-evident_marketing_text.style  = { align: "left", font:"300px bit", fill:"rgb(255,255,255)", dropShadow: 'true', dropShadowColor: 'rgb(0,140,186)'}
-evident_marketing_text.position.y = h - 300
-evident_marketing_text.position.x = 10
+evident_marketing_text.style  = { align: "left", font:"350px bit", fill:"rgb(255,255,255)", dropShadow: 'true', dropShadowColor: 'rgb(0,140,186)'}
+evident_marketing_text.position.y = h - 350
+evident_marketing_text.position.x = 100
 
 setTimeout(function(){
   evident_marketing_text.text = 'evident.io'
@@ -342,10 +349,18 @@ function animate() {
   attr(baddies_array, shields_array, -0.95)
   attr(baddies_array, clouds_array, 1)
 
-  // attr()
+  if(cloudthulu.active === true){
+    attr(shields_array, thulu_array, 0.8)
+  }
 
-  // shields_array.forEach(tick_attract)
-  // baddies_array.forEach(tick_attract)
+  cloudthulu.position.y -= 5
+  if(cloudthulu.position.y < -400){
+    cloudthulu.position.y = h + 400
+    cloudthulu.position.x = (Math.random() * (w*0.7)) + (w*0.3)
+  }
+
+  var cloudthulu_alpha = Math.sin(t) * Math.tan(t*0.1)
+  cloudthulu.alpha = Math.sin(cloudthulu_alpha)
 
   // render the stage
   renderer.render(stage);
